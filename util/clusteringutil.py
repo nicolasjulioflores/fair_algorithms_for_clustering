@@ -71,14 +71,22 @@ def subsample_data(df, N):
 
 # Scales each of the columns to have mean = 0, var = 1
 # Arguments:
-#   df : Dataframe to scale
+#   df (pd.DataFrame) : Dataframe to scale
 # Output:
-#   df : Dataframe scaled
+#   df (pd.DataFrame) : Dataframe scaled
 def scale_data(df):
     scaler = StandardScaler()
     df = pd.DataFrame(scaler.fit_transform(df[df.columns]), columns=df.columns)
     return df
 
+# Perform the K-means clustering on the dataframe. Return the centers of the k-means clustering.
+# Add back the variable_of_interest column to the dataframe.
+# Arguments:
+#   df (pd.DataFrame) : Dataframe to perform clustering on
+#   variable_column (pd.Series) : Column that fairness is to be performed on. Clustering
+#       should not be done on this column.
+#   config (ConfigParser) : Config file that is being used for the run.
+#   dataset (str) : Name of the dataset, used to key the config.
 def get_cluster_centers(df, variable_column, config, dataset):
     n_clusters = config["DEFAULT"].getint("n_clusters")
     variable_of_interest = config[dataset]["variable_of_interest"]
@@ -104,7 +112,7 @@ def take_by_key(dic, seq):
 # Dump output to a file in JSON format
 # Arguments : 
 #   output (dict) : Data to write
-#   data_dir : Where to write the data
+#   data_dir (str) : Where to write the data
 def write_fairness_trial(output, data_dir, post_fix = ''):
     g_date_format = "%Y-%m-%d-%H:%M:%S" # format of output
     now = datetime.datetime.now().strftime(g_date_format)
